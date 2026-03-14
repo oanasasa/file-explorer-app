@@ -1,0 +1,1 @@
+//FileInfo interface and other shared types
