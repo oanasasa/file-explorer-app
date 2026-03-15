@@ -4,8 +4,9 @@ import path from "path";
 
 const ROOT_DIR = process.env.FILE_EXPLORER_ROOT || process.cwd();
 
+console.log("File controller initialized, root directory:", ROOT_DIR);
 function resolveSafePath(userPath: string): string {
-  const resolved = path.resolve(userPath);
+  const resolved = path.resolve(ROOT_DIR, userPath.replace(/^\//, ""));
 
   if (!resolved.startsWith(ROOT_DIR)) {
     throw new Error("FORBIDDEN");
@@ -38,6 +39,7 @@ export const listDirectory = (req: Request, res: Response) => {
 
       return {
         name,
+        path: safePath,
         type: stats.isDirectory() ? "directory" : "file",
         size: stats.isFile() ? stats.size : null,
         createdAt: stats.birthtime.toISOString(),
@@ -80,6 +82,7 @@ export const getFileInfo = (req: Request, res: Response) => {
 
     res.json({
       name: path.basename(safePath),
+      path: safePath,
       type: stats.isDirectory() ? "directory" : "file",
       size: stats.isFile() ? stats.size : null,
       createdAt: stats.birthtime.toISOString(),

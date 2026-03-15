@@ -1,4 +1,5 @@
-import FileListItem from "./components/FileListItem";
+import Breadcrumb from "./components/Breadcrumb";
+import FileList from "./components/FileList";
 import useFileExplorer from "./hooks/useFileExplorer";
 
 function App() {
@@ -8,13 +9,20 @@ function App() {
     selectedItem,
     loading,
     error,
-    navigateTo,
     selectItem,
+    navigateTo,
+    pathSegments,
   } = useFileExplorer();
 
-  console.log("selectedItem", selectedItem);
   return (
-    <>{/* <FileListItem file={{ name: "example.txt", size: 2048 }} /> */}</>
+    <>
+      <Breadcrumb segments={pathSegments} onNavigate={navigateTo} />
+      <FileList
+        files={dirContents}
+        onNavigate={navigateTo}
+        onSelect={selectItem}
+      />
+    </>
   );
 }
 

@@ -1,30 +1,23 @@
 import { useState, useEffect } from "react";
+import { fetchDirectory, fetchFileInfo } from "../api/filesApi";
+import type { FileInfo } from "../types";
 
 const useFileExplorer = () => {
   const [path, setPath] = useState<string>("/");
-  const [dirContents, setDirContents] = useState<File[]>([]);
-  const [selectedItem, setSelectedItem] = useState<File | null>(null);
+  const [dirContents, setDirContents] = useState<FileInfo[]>([]);
+  const [selectedItem, setSelectedItem] = useState<FileInfo | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  // derived from path state, not from the URL
+  const cleanPath = path === "/" ? "/" : path.replace(/^\//, "");
+
   useEffect(() => {
-    const fetchDirContents = async () => {
+    const loadDirectory = async () => {
       setLoading(true);
       setError(null);
-
-      const urlPath = window.location.pathname;
-      const cleanPath = urlPath === "/" ? "/" : urlPath.slice(1);
-
       try {
-        const response = await fetch(
-          `/api/files?path=${encodeURIComponent(cleanPath)}`
-        );
-        if (!response.ok) {
-          throw new Error(
-            `Error fetching directory contents: ${response.statusText}`
-          );
-        }
-        const data = await response.json();
+        const data = await fetchDirectory(cleanPath);
         setDirContents(data);
       } catch (err: any) {
         setError(err.message);
@@ -33,18 +26,33 @@ const useFileExplorer = () => {
       }
     };
 
-    fetchDirContents();
-  }, [path]); // still triggered by path changes
+    loadDirectory();
+  }, [path]);
 
   const navigateTo = (newPath: string) => {
-    window.history.pushState(null, "", "/" + newPath);
+    const urlSegment = newPath.split("/").filter(Boolean).pop() || "";
+    window.history.pushState(null, "", "/" + urlSegment);
     setPath(newPath);
     setSelectedItem(null);
   };
 
-  const selectItem = (item: File) => {
-    setSelectedItem(item);
+  const selectItem = async (item: FileInfo) => {
+    try {
+      const detailed = await fetchFileInfo(item.path);
+      setSelectedItem(detailed);
+    } catch (err: any) {
+      setSelectedItem(item); // fallback to basic info if detail fetch fails
+      setError(err.message);
+    }
   };
+
+  const pathSegments = path
+    .split("/")
+    .filter(Boolean)
+    .map((segment, index, arr) => ({
+      name: segment,
+      path: "/" + arr.slice(0, index + 1).join("/"),
+    }));
 
   return {
     path,
@@ -52,6 +60,7 @@ const useFileExplorer = () => {
     selectedItem,
     loading,
     error,
+    pathSegments,
     navigateTo,
     selectItem,
   };
