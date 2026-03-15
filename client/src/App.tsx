@@ -1,16 +1,21 @@
-import { useEffect, useState } from "react";
+import FileListItem from "./components/FileListItem";
+import useFileExplorer from "./hooks/useFileExplorer";
 
 function App() {
-  const [files, setFiles] = useState([]);
+  const {
+    path,
+    dirContents,
+    selectedItem,
+    loading,
+    error,
+    navigateTo,
+    selectItem,
+  } = useFileExplorer();
 
-  useEffect(() => {
-    fetch("/api/files?path=/")
-      .then((response) => response.json())
-      .then((data) => setFiles(data))
-      .catch((error) => console.error("Error fetching files:", error));
-  }, []);
-
-  return <div>App</div>;
+  console.log("selectedItem", selectedItem);
+  return (
+    <>{/* <FileListItem file={{ name: "example.txt", size: 2048 }} /> */}</>
+  );
 }
 
 export default App;
