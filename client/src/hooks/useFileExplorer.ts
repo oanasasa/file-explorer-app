@@ -16,8 +16,9 @@ const useFileExplorer = () => {
       try {
         const data = await fetchDirectory(path);
         setDirContents(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Unexpected error";
+        setError(message);
       } finally {
         setLoading(false);
       }
@@ -26,18 +27,15 @@ const useFileExplorer = () => {
     loadDirectory();
   }, [path]);
 
-  const navigateTo = (segment: string) => {
-    const newPath = segment.startsWith("/")
-      ? segment // from breadcrumb — already full path
-      : `${path === "/" ? "" : path}/${segment}`; // from clicking a folder — join with current
-
+  const navigateTo = (newPath: string) => {
     setPath(newPath);
     setSelectedItem(null);
   };
 
   const selectItem = async (item: FileInfo) => {
+    const fullPath = `${path === "/" ? "" : path}/${item.name}`;
     try {
-      const detailed = await fetchFileInfo(item.name);
+      const detailed = await fetchFileInfo(fullPath);
       setSelectedItem(detailed);
     } catch {
       setSelectedItem(item);

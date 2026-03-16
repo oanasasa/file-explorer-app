@@ -2,6 +2,8 @@ import type { FileInfo } from "../types";
 
 interface FileListItemProps {
   file: FileInfo;
+  currentPath: string;
+  isFocused: boolean;
   onNavigate: (path: string) => void;
   onSelect: (file: FileInfo) => void;
 }
@@ -27,15 +29,22 @@ const formatDate = (dateStr: string): string => {
   });
 };
 
-const FileListItem = ({ file, onNavigate, onSelect }: FileListItemProps) => {
+const FileListItem = ({
+  file,
+  currentPath,
+  onNavigate,
+  isFocused,
+  onSelect,
+}: FileListItemProps) => {
   const isDirectory = file.type === "directory";
 
-  console.log("Rendering FileListItem:", file);
   const handleClick = () => {
     if (isDirectory) {
-      onNavigate(file.name);
+      const fullPath = `${currentPath === "/" ? "" : currentPath}/${file.name}`;
+      onSelect(file); // show info in DetailPanel
+      onNavigate(fullPath); // navigate into it
     } else {
-      onSelect(file);
+      onSelect(file); // just show info
     }
   };
 

@@ -3,11 +3,12 @@ import FileListItem from "./FileListItem";
 
 interface FileListProps {
   files: FileInfo[];
+  currentPath: string;
   onNavigate: (path: string) => void;
   onSelect: (file: FileInfo) => void;
 }
 
-function FileList({ files, onNavigate, onSelect }: FileListProps) {
+function FileList({ files, currentPath, onNavigate, onSelect }: FileListProps) {
   return (
     <div className="file-list">
       <div className="file-list-header">
@@ -24,6 +25,7 @@ function FileList({ files, onNavigate, onSelect }: FileListProps) {
           <FileListItem
             key={file.name}
             file={file}
+            currentPath={currentPath}
             onNavigate={onNavigate}
             onSelect={onSelect}
           />
