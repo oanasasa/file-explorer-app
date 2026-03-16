@@ -19,7 +19,7 @@ cd file-explorer
 
 ```bash
 cd server
-cp .env.example .env
+cp .env
 ```
 
 Open `server/.env` and set the two variables:
@@ -90,7 +90,7 @@ npm test
 - Click any file to see its metadata in the detail panel
 - Breadcrumb bar showing your current location — click any segment to jump back
 - Detail panel showing name, type, size, created date and last modified date
-- File size displayed in human readable format (B, KB, MB, GB)
+- File size displayed in readable format (B, KB, MB, GB)
 - Dates formatted in a readable locale format
 - Loading spinner while fetching directory contents
 - Error message displayed if something goes wrong
@@ -135,7 +135,8 @@ file-explorer/
 │   │       └── fixtures/           # Test files used by server tests
 │   ├── .env                        # Your local config (not committed)
 │   ├── server.ts               # Express app setup
-│   └── vitest.config.ts
+│   ├── vitest.config.ts
+│   └── Dockerfile
 │
 ├── client/
 │   ├── src/
@@ -157,9 +158,9 @@ file-explorer/
 │   │       ├── FileListItem.test.tsx
 │   │       ├── FileList.test.tsx
 │   │       └── Breadcrumb.test.tsx
-│   └── vite.config.ts
+│   ├── vite.config.ts
+│   └── Dockerfile
 │
-├── docker-compose.yml
 └── README.md
 ```
 
@@ -237,5 +238,4 @@ Computing recursive directory sizes on every listing request would be slow for l
 | Path traversal attacks                         | `path.resolve()` + `startsWith(ROOT_DIR)` check before any `fs` call                                                                                                                                         |
 | Path resolution across different input formats | Paths arrived from the client in three formats — full absolute, absolute without root prefix, and relative. Each case is detected and handled explicitly in `resolveSafePath` before the security check runs |
 | `ROOT_DIR` read too early in tests             | Moved to `getRootDir()` function so it reads fresh on every request                                                                                                                                          |
-| React double render in dev                     | Expected behaviour from React 18 Strict Mode — only happens in development                                                                                                                                   |
 | CORS in development                            | Vite proxy forwards `/api/*` to the backend — no CORS headers needed                                                                                                                                         |
