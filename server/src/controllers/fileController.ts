@@ -39,7 +39,6 @@ export const listDirectory = (req: Request, res: Response) => {
 
       return {
         name,
-        path: safePath,
         type: stats.isDirectory() ? "directory" : "file",
         size: stats.isFile() ? stats.size : null,
         createdAt: stats.birthtime.toISOString(),
@@ -82,7 +81,6 @@ export const getFileInfo = (req: Request, res: Response) => {
 
     res.json({
       name: path.basename(safePath),
-      path: safePath,
       type: stats.isDirectory() ? "directory" : "file",
       size: stats.isFile() ? stats.size : null,
       createdAt: stats.birthtime.toISOString(),

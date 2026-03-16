@@ -30,9 +30,10 @@ const formatDate = (dateStr: string): string => {
 const FileListItem = ({ file, onNavigate, onSelect }: FileListItemProps) => {
   const isDirectory = file.type === "directory";
 
+  console.log("Rendering FileListItem:", file);
   const handleClick = () => {
     if (isDirectory) {
-      onNavigate(file.path);
+      onNavigate(file.name);
     } else {
       onSelect(file);
     }

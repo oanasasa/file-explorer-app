@@ -3,16 +3,8 @@ import FileList from "./components/FileList";
 import useFileExplorer from "./hooks/useFileExplorer";
 
 function App() {
-  const {
-    path,
-    dirContents,
-    selectedItem,
-    loading,
-    error,
-    selectItem,
-    navigateTo,
-    pathSegments,
-  } = useFileExplorer();
+  const { dirContents, selectItem, navigateTo, pathSegments } =
+    useFileExplorer();
 
   return (
     <>

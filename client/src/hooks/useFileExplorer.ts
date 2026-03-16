@@ -9,15 +9,12 @@ const useFileExplorer = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // derived from path state, not from the URL
-  const cleanPath = path === "/" ? "/" : path.replace(/^\//, "");
-
   useEffect(() => {
     const loadDirectory = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await fetchDirectory(cleanPath);
+        const data = await fetchDirectory(path);
         setDirContents(data);
       } catch (err: any) {
         setError(err.message);
@@ -29,20 +26,21 @@ const useFileExplorer = () => {
     loadDirectory();
   }, [path]);
 
-  const navigateTo = (newPath: string) => {
-    const urlSegment = newPath.split("/").filter(Boolean).pop() || "";
-    window.history.pushState(null, "", "/" + urlSegment);
+  const navigateTo = (segment: string) => {
+    const newPath = segment.startsWith("/")
+      ? segment // from breadcrumb — already full path
+      : `${path === "/" ? "" : path}/${segment}`; // from clicking a folder — join with current
+
     setPath(newPath);
     setSelectedItem(null);
   };
 
   const selectItem = async (item: FileInfo) => {
     try {
-      const detailed = await fetchFileInfo(item.path);
+      const detailed = await fetchFileInfo(item.name);
       setSelectedItem(detailed);
-    } catch (err: any) {
-      setSelectedItem(item); // fallback to basic info if detail fetch fails
-      setError(err.message);
+    } catch {
+      setSelectedItem(item);
     }
   };
 
