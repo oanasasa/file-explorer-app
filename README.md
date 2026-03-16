@@ -232,9 +232,10 @@ Computing recursive directory sizes on every listing request would be slow for l
 
 ## Challenges
 
-| Challenge                          | Solution                                                                   |
-| ---------------------------------- | -------------------------------------------------------------------------- |
-| Path traversal attacks             | `path.resolve()` + `startsWith(ROOT_DIR)` check before any `fs` call       |
-| `ROOT_DIR` read too early in tests | Moved to `getRootDir()` function so it reads fresh on every request        |
-| React double render in dev         | Expected behaviour from React 18 Strict Mode — only happens in development |
-| CORS in development                | Vite proxy forwards `/api/*` to the backend — no CORS headers needed       |
+| Challenge                                      | Solution                                                                                                                                                                                                     |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Path traversal attacks                         | `path.resolve()` + `startsWith(ROOT_DIR)` check before any `fs` call                                                                                                                                         |
+| Path resolution across different input formats | Paths arrived from the client in three formats — full absolute, absolute without root prefix, and relative. Each case is detected and handled explicitly in `resolveSafePath` before the security check runs |
+| `ROOT_DIR` read too early in tests             | Moved to `getRootDir()` function so it reads fresh on every request                                                                                                                                          |
+| React double render in dev                     | Expected behaviour from React 18 Strict Mode — only happens in development                                                                                                                                   |
+| CORS in development                            | Vite proxy forwards `/api/*` to the backend — no CORS headers needed                                                                                                                                         |
